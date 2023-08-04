@@ -1,0 +1,7 @@
+stages:
+  preprocessed_data:
+    cmd: 002_EDA_and_DataPre-Processing.ipynb
+    deps:
+      - data/data.csv
+    outs:
+      - data/Filtered_arxiv_papers.csv
