@@ -1,0 +1,11 @@
+stages:
+  - name: generate_data
+    cmd: python arxiv_scraper_preprocess.py
+    deps:
+      - arxiv_scraper_preprocess.py
+    outs:
+      - md5: cfff94edce9452dea28fe6797411c354.dir
+        size: 488288811
+        nfiles: 4
+        hash: md5
+        path: data
