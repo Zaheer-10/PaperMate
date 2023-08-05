@@ -1,3 +1,5 @@
+stages:
+  - name: my_data
 outs:
 - md5: cfff94edce9452dea28fe6797411c354.dir
   size: 488288811
