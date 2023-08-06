@@ -159,3 +159,4 @@ cython_debug/
 NoteBooks/untitled.txt
 /data
 dvc.yaml
+.vscode/settings.json
