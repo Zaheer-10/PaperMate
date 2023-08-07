@@ -1,3 +1,7 @@
+<<<<<<< HEAD
 ['remote "origin"']
     url = s3://dvc
     endpointurl = https://dagshub.com/Zaheer-10/PaperMate.s3
+=======
+
+>>>>>>> e07e7ef6b24b3ee0393c8f200eb53db331c1a78c
