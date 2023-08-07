@@ -2,7 +2,7 @@ import arxiv
 import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
-from constants import PATH_DATA_BASE # constant is a string that represents the path to the data directory
+# from constants import PATH_DATA_BASE # constant is a string that represents the path to the data directory
 
 query_keywords = [
     "\"image segmentation\"",
@@ -161,7 +161,7 @@ def main() -> None:
     all_ids = []
 
     for query in query_keywords:
-        terms, titles, abstracts, urls , ids = query_with_keywords(query)
+        terms, titles, abstracts, urls , ids = query_with_keywords(query , client)
         all_titles.extend(titles)
         all_abstracts.extend(abstracts)
         all_terms.extend(terms)
@@ -176,17 +176,17 @@ def main() -> None:
     'urls': all_urls,
     'ids':all_ids })
 
-    
-    arxiv_data.to_csv(PATH_DATA_BASE / "data.csv", index=False)
+    PATH_DATA_BASE = Path.cwd()
+    arxiv_data.to_csv(PATH_DATA_BASE / "data_00.csv", index=False)
 
     print("\n→ Scraping completed!\n ")
     
     print("\n→ Dropping Duplicated 🐼\n ")
     
-    arxiv_data = pd.read_csv(PATH_DATA_BASE / "data.csv")
-    arxiv_data = arxiv_data[~arxiv_data['titles'].duplicated()] 
+    arxiv_data_00 = pd.read_csv(PATH_DATA_BASE / "data_00.csv")
+    arxiv_data_00 = arxiv_data_00[~arxiv_data_00['titles'].duplicated()] 
     
-    arxiv_data.to_csv(PATH_DATA_BASE / 'Filtered_arxiv_papers.csv' ,index=False)
+    arxiv_data_00.to_csv(PATH_DATA_BASE / 'Filtered_arxiv_papers_00.csv' ,index=False)
     print("\n→ Filtered data saved successfully ❤️‍🔥\n ")
 
 if __name__ == '__main__':
