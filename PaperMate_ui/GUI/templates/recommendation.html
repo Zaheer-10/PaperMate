@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Add your CSS styles here */
+    body {
+        background-color: mintcream;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+    }
+    .card {
+        max-width: 800px;
+        height: auto;
+        background-color: #524f4f;
+        border: 0;
+        box-shadow: 0 7px 7px rgba(0, 0, 0, 0.18);
+        margin: .5em auto;
+    }
+    .card.dark {
+        color: #fff;
+    }
+    .card.card.bg-light-subtle .card-title {
+        color: rgb(59, 55, 60);
+    }
+    .card img {
+        width: 50px;
+        height: 50px;
+        border-radius: 0.7em;
+        margin-right: 1em;
+    }
+    .card-body {
+        display: flex;
+        align-items: center;
+    }
+    .text-section {
+        max-width: 100%;
+        padding: 0 1em;
+    }
+    .cta-section {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        margin-top: 1em;
+    }
+    .cta-section .btn {
+        padding: 0.3em 0.5em;
+    }
+    .card.bg-light-subtle .cta-section .btn {
+        background-color: #774084;
+        border-color: #a77fd0;
+    }
+    @media screen and (max-width: 475px) {
+        .card {
+            font-size: 0.9em;
+        }
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 class="mb-4 text-center">Recommended Papers</h1>
+    <p class="lead text-center">"🔍 Your Interests, Your Papers! 📚 Enjoy Learning and Visit Again. 🚀 Thank You!"</p>
+    <div class="row">
+        {% for paper in papers %}
+        <div class="col-md-12 mb-4">
+            <div class="card dark">
+                <div class="card-body">
+                    <img src="https://imgs.search.brave.com/KPfQF-d5vwdpq53r367d0QOPwqsVzStxV7QNhfd7zvY/rs:fit:860:0:0/g:ce/aHR0cHM6Ly9pbmZv/LmFyeGl2Lm9yZy9i/cmFuZC9pbWFnZXMv/YnJhbmQtbG9nby1w/cmltYXJ5LmpwZw" class="card-img-top" alt="...">
+                    <div class="text-section">
+                        <div style="display: flex; align-items: center;">
+                            <h5 class="card-title" style="margin-right: 1em;"><strong>{{ paper.title }}</strong></h5>
+                        </div>
+                        <p class="card-text">{{ paper.abstract|truncatechars:150 }}
+                            {% if paper.abstract|length > 150 %}
+                            <a data-toggle="collapse" href="#collapse-{{ paper.id }}" role="button" aria-expanded="false" aria-controls="collapse-{{ paper.id }}">
+                                Read more
+                            </a>
+                            <div class="collapse" id="collapse-{{ paper.id }}">
+                                {{ paper.abstract }}
+                            </div>
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
