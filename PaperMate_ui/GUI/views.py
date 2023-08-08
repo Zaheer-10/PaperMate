@@ -19,21 +19,21 @@ Paper.populate_database()
 def home(request):
     trending_papers = [
         {
-            'title': 'Paper 1 Title',
-            'summary': 'Summary of Paper 1...',
-            'url': 'https://arxiv.org/abs/XXXX.XXXX',
+            'title':'Attention Is All You Need',
+            'summary': 'The paper shows that the Transformer achieves state-of-the-art results on machine translation and parsing tasks',
+            'url': 'https://arxiv.org/pdf/1706.03762.pdf',
             'image_url': 'static/images/paper1.jpg',
         },
         {
-            'title': 'Paper 2 Title',
+            'title': 'Program Synthesis with Large Language Models',
             'summary': 'Summary of Paper 2...',
-            'url': 'https://arxiv.org/abs/XXXX.XXXX',
+            'url': 'https://arxiv.org/pdf/2108.07732.pdf',
             'image_url': 'static/images/paper2.jpg',
         },
         {
-            'title': 'Paper 3 Title',
-            'summary': 'Summary of Paper 3...',
-            'url': 'https://arxiv.org/abs/XXXX.XXXX',
+            'title': 'The Bayesian Learning Rule',
+            'summary': "The paper derives a general algorithm for learning from data using Bayesian principles and natural gradients",
+            'url': "https://arxiv.org/pdf/2107.04562.pdf",
             'image_url': 'static/images/paper3.jpg',
         },
         # Add more papers as needed
