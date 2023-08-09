@@ -1,0 +1,501 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+RecommendedPapers
+{% endblock %}
+
+{% block details %}
+
+
+
+
+    <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-lg-8 col-12 mx-auto">
+                        <h1 class="text-white text-center">Discover. Learn. Enjoy</h1>
+
+                        <h6 class="text-center">No More Endless Searching - PaperMate Delivers the Perfect Papers!</h6>
+
+                             <form method="post" action="{% url 'search_papers' %}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5">
+                            <div class="input-group input-group-lg">
+                                <span class="input-group-text bi-search" id="basic-addon1">
+
+                                </span>
+
+                    {% csrf_token %}
+                    <input type="text" name="query" class="form-control" id="searchInput" placeholder="Search Something........" autocomplete="on" style="border: none !important;">
+
+                                <button type="submit" class="form-control">Search</button>
+                                        
+                                <!-- <button type="submit" class="form-control custom-btn btn-13">Read More</button> -->
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </section> 
+
+
+        <section class="featured-section">
+            <div class="container">
+                <div class="row justify-content-center">
+
+                    <div class="col-lg-4 col-12 mb-4 mb-lg-0">
+                        <div class="custom-block bg-white shadow-lg">
+                            <a href="#">
+                                <div class="d-flex">
+                                    <div>
+                                        <h5 class="mb-2">Introducing PaperMate📜</h5>
+
+                                        <p class="mb-0">👉 Get personalized machine learning paper recommendations. NLP-powered for 4 top papers per interest, updated monthly with fresh arXiv data. Stay informed, learn, and spark your projects.</p>
+                                    </div>
+
+                                    <span class="badge bg-design rounded-pill ms-auto"></span>
+                                </div>
+
+                                <img src=" {% static 'images/topics/undraw_Remote_design_team_re_urdx.png' %}"
+                                    class="custom-block-image img-fluid" alt="">
+                            </a>
+                        </div>
+                    </div>
+
+<div class="col-lg-6 col-12 d-flex align-items-center justify-content-center">
+    <div class="custom-block custom-block-overlay">
+        <div class="d-flex flex-column h-100">
+            <img src="{% static 'images/reading_paper.jpeg' %}" class="custom-block-image img-fluid" alt="">
+
+            <div class="custom-block-overlay-text d-flex">
+                <div>
+                    <h5 class="text-dark mb-2 text-center " style="margin-top:15px ;"><b>How to Use PaperMate📜</b></h5>
+
+                    <p class="text-white" style="margin-top:20px ;">Eager to dive into the world of AI, ML, NLP, DL &amp; computer vision? 
+                        <br><i>Just type in your topics</i>, give that search button a triumphant click, and let PaperMate perform its enchanting feat – whisking you away to a realm of arXiv wonders in mere seconds. <br>And guess what? We're not stopping here – more treasures are on the horizon. <br> Get in touch, let's ride this cosmic wave together! 🚀🔮</p>
+
+                </div>
+
+                <span class="badge bg-finance rounded-pill ms-auto"></span>
+            </div>
+
+            <div class="section-overlay"></div>
+        </div>
+    </div>
+</div>
+
+
+                </div>
+            </div>
+        </section>
+
+
+        <section class="explore-section section-padding" id="section_2">
+            <div class="container">
+
+                <div class="col-12 text-center">
+                    <h2 class="mb-4">Hot Picks: Trending Research Paper's</h1>
+                </div>
+
+            </div>
+            </div>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <ul class="nav nav-tabs" id="myTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="design-tab" data-bs-toggle="tab"
+                                data-bs-target="#design-tab-pane" type="button" role="tab"
+                                aria-controls="design-tab-pane" aria-selected="true">Machine Learning</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="marketing-tab" data-bs-toggle="tab"
+                                data-bs-target="#marketing-tab-pane" type="button" role="tab"
+                                aria-controls="marketing-tab-pane" aria-selected="false">Natural Language Processing</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="finance-tab" data-bs-toggle="tab"
+                                data-bs-target="#finance-tab-pane" type="button" role="tab"
+                                aria-controls="finance-tab-pane" aria-selected="false">Artificial Intelligence</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="music-tab" data-bs-toggle="tab"
+                                data-bs-target="#music-tab-pane" type="button" role="tab" aria-controls="music-tab-pane"
+                                aria-selected="false">Deep Learning | Neural Network's</button>
+                        </li>
+
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="education-tab" data-bs-toggle="tab"
+                                data-bs-target="#education-tab-pane" type="button" role="tab"
+                                aria-controls="education-tab-pane" aria-selected="false">Computer Vision</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-12">
+                        <div class="tab-content" id="myTabContent">
+                            <div class="tab-pane fade show active" id="design-tab-pane" role="tabpanel"
+                                aria-labelledby="design-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Web Design</h5>
+
+                                                        <p class="mb-0">Topic Listing Template based on Bootstrap 5</p>
+                                                    </div>
+
+                                                    <span class="badge bg-design rounded-pill ms-auto">14</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Remote_design_team_re_urdx.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Graphic</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-design rounded-pill ms-auto">75</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Redesign_feedback_re_jvm0.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Logo Design</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-design rounded-pill ms-auto">100</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/colleagues-working-cozy-office-medium-shot.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="marketing-tab-pane" role="tabpanel"
+                                aria-labelledby="marketing-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Advertising</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-advertising rounded-pill ms-auto">30</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_online_ad_re_ol62.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Video Content</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-advertising rounded-pill ms-auto">65</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Group_video_re_btu7.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Viral Tweet</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-advertising rounded-pill ms-auto">50</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_viral_tweet_gndb.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="finance-tab-pane" role="tabpanel"
+                                aria-labelledby="finance-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-12 mb-4 mb-lg-0">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Investment</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-finance rounded-pill ms-auto">30</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Finance_re_gnv2.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-12">
+                                        <div class="custom-block custom-block-overlay">
+                                            <div class="d-flex flex-column h-100">
+                                                <img src=" {% static 'images/businesswoman-using-tablet-analysis-graph-company-finance-strategy-statistics-success-concept-planning-future-office-room.jpg' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+
+                                                <div class="custom-block-overlay-text d-flex">
+                                                    <div>
+                                                        <h5 class="text-white mb-2">Finance</h5>
+
+                                                        <p class="text-white">Lorem ipsum dolor, sit amet consectetur
+                                                            adipisicing elit. Sint animi necessitatibus aperiam
+                                                            repudiandae nam omnis</p>
+
+                                                        <a href="#"
+                                                            class="btn custom-btn mt-2 mt-lg-3">Learn More</a>
+                                                    </div>
+
+                                                    <span class="badge bg-finance rounded-pill ms-auto">25</span>
+                                                </div>
+
+                                                <div class="social-share d-flex">
+                                                    <p class="text-white me-4">Share:</p>
+
+                                                    <ul class="social-icon">
+                                                        <li class="social-icon-item">
+                                                            <a href="#" class="social-icon-link bi-twitter"></a>
+                                                        </li>
+
+                                                        <li class="social-icon-item">
+                                                            <a href="#" class="social-icon-link bi-facebook"></a>
+                                                        </li>
+
+                                                        <li class="social-icon-item">
+                                                            <a href="#" class="social-icon-link bi-pinterest"></a>
+                                                        </li>
+                                                    </ul>
+
+                                                    <a href="#" class="custom-icon bi-bookmark ms-auto"></a>
+                                                </div>
+
+                                                <div class="section-overlay"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="music-tab-pane" role="tabpanel" aria-labelledby="music-tab"
+                                tabindex="0">
+                                <div class="row">
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="#">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Composing Song</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-music rounded-pill ms-auto">45</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Compose_music_re_wpiw.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-3">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="#">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Online Music</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-music rounded-pill ms-auto">45</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_happy_music_g6wc.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-4 col-md-6 col-12">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="#">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Podcast</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-music rounded-pill ms-auto">20</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Podcast_audience_re_4i5q.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="tab-pane fade" id="education-tab-pane" role="tabpanel"
+                                aria-labelledby="education-tab" tabindex="0">
+                                <div class="row">
+                                    <div class="col-lg-6 col-md-6 col-12 mb-4 mb-lg-3">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="#">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Graduation</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-education rounded-pill ms-auto">80</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Graduation_re_gthn.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-lg-6 col-md-6 col-12">
+                                        <div class="custom-block bg-white shadow-lg">
+                                            <a href="#">
+                                                <div class="d-flex">
+                                                    <div>
+                                                        <h5 class="mb-2">Educator</h5>
+
+                                                        <p class="mb-0">Lorem Ipsum dolor sit amet consectetur</p>
+                                                    </div>
+
+                                                    <span class="badge bg-education rounded-pill ms-auto">75</span>
+                                                </div>
+
+                                                <img src=" {% static 'images/topics/undraw_Educator_re_ju47.png' %}"
+                                                    class="custom-block-image img-fluid" alt="">
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+        </section>
+
+
+        <section class="timeline-section section-padding" id="section_3">
+            <div class="section-overlay"></div>
+
+            <div class="container">
+                <div class="row">
+
+                    <div class="col-12 text-center">
+                        <h2 class="text-white mb-4">How does it work?</h1>
+                    </div>
+
+                    <div class="col-lg-10 col-12 mx-auto">
+                        <div class="timeline-container">
+                            <ul class="vertical-scrollable-timeline" id="vertical-scrollable-timeline">
+                                <div class="list-progress">
+                                    <div class="inner"></div>
+                                </div>
+
+                                <li>
+                                    <h4 class="text-white mb-3">Share Your Interest</h4>
+
+                                    <p class="text-white"> Imagine you're telling PaperMate what you're curious about – like Large Language Models, Transformers, or understanding languages better. <i>Try to give Better prompt. </i> </p>
+
+                                    <div class="icon-holder">
+                                        <i class="bi-search"></i>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <h4 class="text-white mb-3">The Smart Brainy Bit</h4>
+
+                                    <p class="text-white"> PaperMate gets to work, like a detective with superpowers. It reads research papers and what you're interested in. It connects the dots between what you want to know and what's written in the papers.</p>  
+                                    <div class="icon-holder">
+                                        <i class="bi-bookmark"></i>
+                                    </div>
+                                </li>
+
+                                <li>
+                                    <h4 class="text-white mb-3">Sparkling Selections</h4>
+
+                                    <p class="text-white">Brace yourself for the revelation! PaperMate presents you with four dazzling papers. These aren't random picks; they're handpicked gems that align harmoniously with your expressed passion. And guess what? Each comes with a sneak peek (the abstract) and a bridge (links) to deeper knowledge.</p>
+                                    <div class="icon-holder">
+                                        <i class="bi-book"></i>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+{% endblock %}
