@@ -34,9 +34,9 @@
 
         <nav class="navbar navbar-expand-lg">
             <div class="container">
-                <a class="navbar-brand" href="index.html">
+                <a class="navbar-brand" href="#">
                     <i class="bi-back"></i>
-                    <span>Topic</span>
+                    <span>PaperMate</span>
                 </a>
 
                 <div class="d-lg-none ms-auto me-4">
@@ -56,18 +56,18 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">Trending papers</a>
+                            <a class="nav-link click-scroll" href="#recent_papers">Recent Papers</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="#section_4">How it works</a>
+                            <a class="nav-link click-scroll" href="#working">How it works</a>
                         </li>
 
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="{% url 'qa' %}">QA</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link click-scroll" href="">Contact</a>
+                            <a class="nav-link click-scroll" href=""></a>
                         </li>
 
                     </ul>
@@ -132,24 +132,12 @@
 
                     <div class="col-lg-3 col-md-4 col-12 mt-4 mt-lg-0 ms-auto">
                         <div class="dropdown">
-                            <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                            <button class="btn btn-outline-dark " type="button" 
                                 aria-expanded="false">
                                 English</button>
 
-                            <ul class="dropdown-menu">
-                                <li><button class="dropdown-item" type="button">Thai</button></li>
-
-                                <li><button class="dropdown-item" type="button">Myanmar</button></li>
-
-                                <li><button class="dropdown-item" type="button">Arabic</button></li>
-                            </ul>
-                        </div>
-
-                        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2048 Topic Listing Center. All rights
+                        <p class="copyright-text mt-lg-5 mt-4">Copyright © 2023 Topic Listing Center. All rights
                             reserved.
-                            <br><br>Design: <a rel="nofollow" href="#m"
-                                target="_blank">TemplateMo</a> Distribution <a
-                                href="#">ThemeWagon</a>
                         </p>
                     </div>
                 </div>
@@ -157,6 +145,8 @@
         </footer>
 
         <!-- JAVASCRIPT FILES -->
+
+
         <script src=" {% static 'js/jquery.min.js' %}"></script>
         <script src=" {% static 'js/bootstrap.bundle.min.js' %}"></script>
         <script src=" {% static 'js/jquery.sticky.js' %}"></script>
@@ -164,7 +154,7 @@
         <script src=" {% static 'js/custom.js' %}"></script>
 
 
-</script>
+
 
 </body>
 
