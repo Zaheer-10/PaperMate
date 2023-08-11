@@ -2,6 +2,8 @@ from django.db import transaction
 from django.contrib import admin
 from .models import Paper
 import math
+from .models import RecentPaper
+
 
 @admin.register(Paper)
 class PaperAdmin(admin.ModelAdmin):
@@ -30,3 +32,5 @@ class PaperAdmin(admin.ModelAdmin):
         self.message_user(request, f"Deleted {total_duplicates} duplicate records.")
 
     remove_duplicates.short_description = "Remove selected duplicates"
+
+admin.site.register(RecentPaper)
