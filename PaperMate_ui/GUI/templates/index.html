@@ -6,6 +6,26 @@ RecommendedPapers
 {% endblock %}
 
 {% block details %}
+<style>
+    .animated-error {
+        display: none;
+        animation-duration: 1s;
+        animation-fill-mode: forwards;
+        opacity: 0;
+    }
+
+    @keyframes fadeInOut {
+
+        0%,
+        100% {
+            opacity: 0;
+        }
+
+        50% {
+            opacity: 1;
+        }
+    }
+</style>
 
 
 
@@ -13,29 +33,35 @@ RecommendedPapers
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
     <div class="container">
         <div class="row">
-
             <div class="col-lg-8 col-12 mx-auto">
+                {% if error_message %}
+
+                <div id="errorMessage" class="alert alert-danger animated-error" role="alert">
+                    {{ error_message }}
+                </div>
+                {% endif %}
                 <h1 class="text-white text-center">Discover. Learn. Enjoy</h1>
-
                 <h6 class="text-center">No More Endless Searching - PaperMate Delivers the Perfect Papers!</h6>
-
                 <form method="post" action="{% url 'search_papers' %}" class="custom-form mt-4 pt-2 mb-lg-0 mb-5">
                     <div class="input-group input-group-lg">
-                        <span class="input-group-text bi-search" id="basic-addon1">
-
-                        </span>
-
+                        <span class="input-group-text bi-search" id="basic-addon1"></span>
                         {% csrf_token %}
                         <input type="text" name="query" class="form-control" id="searchInput"
                             placeholder="Search Something........" autocomplete="on" style="border: none !important;">
-
+                        <input type="hidden" id="recognizedText" name="recognized_text">
+                        <button type="button" id="micButton" class="btn btn-outline-success  btn-sm py-1 px-3">
+                            <i class="bi-mic"></i>
+                        </button>
+                        <button type="button" id="stopButton" class="btn btn-outline-warning  btn-sm py-0 px-2">
+                            <i class="bi-stop"></i>
+                        </button>
+                        <button type="button" id="clearButton" class="btn btn-outline-danger  btn-sm py-0 px-2 ">
+                            <i class="bi-x"></i>
+                        </button>
                         <button type="submit" class="form-control">Search</button>
-
-                        <!-- <button type="submit" class="form-control custom-btn btn-13">Read More</button> -->
                     </div>
                 </form>
             </div>
-
         </div>
     </div>
 </section>
@@ -84,18 +110,13 @@ RecommendedPapers
                                     treasures are on the horizon. <br> Get in touch, let's ride this cosmic wave
                                     together! 🚀🔮
                                 </p>
-
                             </div>
-
                             <span class="badge bg-finance rounded-pill ms-auto"></span>
                         </div>
-
                         <div class="section-overlay"></div>
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 </section>
@@ -145,7 +166,7 @@ RecommendedPapers
             <div class="col-12">
                 <div class="tab-content" id="myTabContent">
 
-<!-- Machine learning -->
+                    <!-- Machine learning -->
                     <div class="tab-pane fade show active" id="ml-tab-pane" role="tabpanel" aria-labelledby="ml-tab"
                         tabindex="0">
                         <div class="row">
@@ -161,15 +182,17 @@ RecommendedPapers
                                         </div>
                                     </a>
                                     <p>Authors: {{ paper.authors }}</p>
-                                    <p>Date of Publish: {{ formatted_date }}</p>
+                                    <p style="font-size: 16px;"><b>Date of Publish:</b> {{ paper.published_date }}</p>
+
+
 
                                     <!-- You can add the image placeholder here -->
                                     <!-- <img src="placeholder.jpg" alt="Image Placeholder"> -->
-                                    <img src="{% static 'images/reading1.jpg' %}"
-                                        class="custom-block-image img-fluid" alt="">
+                                    <img src="{% static 'images/reading1.jpg' %}" class="custom-block-image img-fluid"
+                                        alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-primary">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -194,16 +217,16 @@ RecommendedPapers
                                         </div>
                                     </a>
                                     <p>Authors: {{ paper.authors }}</p>
-                                    <p>Date of Publish: {{ formatted_date }}</p>
+                                    <p style="font-size: 16px;"><b>Date of Publish:</b> {{ paper.published_date }}</p>
+
 
                                     <!-- You can add the image placeholder here -->
                                     <!-- <img src="placeholder.jpg" alt="Image Placeholder"> -->
-                                    <img src="{% static 'images/reading1.png' %}"
-
-                                        class="custom-block-image img-fluid" alt="">
+                                    <img src="{% static 'images/reading1.png' %}" class="custom-block-image img-fluid"
+                                        alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-primary">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -216,8 +239,7 @@ RecommendedPapers
 
                     <!-- Artificial Intelligence Papers -->
 
-                    <div class="tab-pane fade " id="ai-tab-pane" role="tabpanel" aria-labelledby="ai-tab"
-                        tabindex="0">
+                    <div class="tab-pane fade " id="ai-tab-pane" role="tabpanel" aria-labelledby="ai-tab" tabindex="0">
                         <div class="row">
                             {% for paper in ai_papers %}
                             <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
@@ -231,7 +253,8 @@ RecommendedPapers
                                         </div>
                                     </a>
                                     <p>Authors: {{ paper.authors }}</p>
-                                    <p>Date of Publish: {{ formatted_date }}</p>
+                                    <p style="font-size: 16px;"><b>Date of Publish:</b> {{ paper.published_date }}</p>
+
 
                                     <!-- You can add the image placeholder here -->
                                     <!-- <img src="placeholder.jpg" alt="Image Placeholder"> -->
@@ -239,7 +262,7 @@ RecommendedPapers
                                         class="custom-block-image img-fluid" alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-primary">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -251,8 +274,7 @@ RecommendedPapers
 
                     <!-- Computer Vision Papers -->
 
-                    <div class="tab-pane fade " id="cv-tab-pane" role="tabpanel" aria-labelledby="-tab"
-                        tabindex="0">
+                    <div class="tab-pane fade " id="cv-tab-pane" role="tabpanel" aria-labelledby="-tab" tabindex="0">
                         <div class="row">
                             {% for paper in cv_papers %}
                             <div class="col-lg-4 col-md-6 col-12 mb-4 mb-lg-0">
@@ -266,16 +288,16 @@ RecommendedPapers
                                         </div>
                                     </a>
                                     <p>Authors: {{ paper.authors }}</p>
-                                    <p>Date of Publish: {{ formatted_date }}</p>
+                                    <p style="font-size: 16px;"><b>Date of Publish:</b> {{ paper.published_date }}</p>
+
 
                                     <!-- You can add the image placeholder here -->
                                     <!-- <img src="placeholder.jpg" alt="Image Placeholder"> -->
-                                    <img src="{% static 'images/reading3.png' %}"
-
-                                        class="custom-block-image img-fluid" alt="">
+                                    <img src="{% static 'images/reading3.png' %}" class="custom-block-image img-fluid"
+                                        alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-primary">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -349,6 +371,75 @@ RecommendedPapers
 </section>
 
 
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const micButton = document.getElementById('micButton');
+    const stopButton = document.getElementById('stopButton');
+    const clearButton = document.getElementById('clearButton');
 
+    if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+
+        recognition.continuous = true;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.results.length - 1][0].transcript;
+            searchInput.value = transcript;
+            document.getElementById('recognizedText').value = transcript;
+        };
+
+        recognition.onend = () => {
+            micButton.classList.remove('active');
+        };
+
+        micButton.addEventListener('click', () => {
+            if (!recognition.recognizing) {
+                micButton.classList.add('active');
+                recognition.start();
+            } else {
+                micButton.classList.remove('active');
+                recognition.stop();
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            recognition.stop();
+            micButton.classList.remove('active');
+        });
+
+        clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+        });
+    } else {
+        micButton.disabled = true;
+    }
+
+
+    // Show the error message and apply the fadeInOut animation
+    const errorMessage = document.getElementById('errorMessage');
+    if (errorMessage) {
+        errorMessage.style.display = 'block';
+        errorMessage.style.animationName = 'fadeInOut';
+        errorMessage.style.animationIterationCount = '1';
+        errorMessage.style.animationTimingFunction = 'ease-in-out';
+        errorMessage.style.animationPlayState = 'running';
+
+        // Hide the error message after 5 seconds
+        setTimeout(() => {
+            errorMessage.style.animationName = 'fadeInOut';
+            errorMessage.style.animationIterationCount = '1';
+            errorMessage.style.animationTimingFunction = 'ease-in-out';
+            errorMessage.style.animationPlayState = 'running';
+
+            // Wait for the animation to complete before hiding the element
+            setTimeout(() => {
+                errorMessage.style.display = 'none';
+            }, 1000);
+        }, 5000); // 5000 milliseconds = 5 seconds
+    }
+
+
+</script>
 
 {% endblock %}

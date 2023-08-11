@@ -14,7 +14,19 @@ RecommendedPapers
 
 
 <div class="container mt-5">
+    {% if search_error %}
+
+    <p class="lead text-center">"😢 Oops, something went wrong with your query or the search function. Please try again later or contact the administrator. 🙏 Thank You!"</p>
+    <p class="text-center">Here are some suggestions to improve your query:</p>
+    <ul>
+        <li>Use keywords that are relevant to your topic of interest.</li>
+        <li>Use quotes to search for exact phrases, such as "machine learning".</li>
+        <li>Use boolean operators to combine or exclude terms, such as AND, OR, and NOT.</li>
+</ul>   
+    {% else %}
     <p class="lead text-center">"🔍 Your Interests, Your Papers! 📚 Enjoy Learning and Visit Again. 🚀 Thank You!"</p>
+    
+    <!-- <p class="lead text-center">"🔍 Your Interests, Your Papers! 📚 Enjoy Learning and Visit Again. 🚀 Thank You!"</p> -->
     <div class="row">
         {% for paper in papers %}
         <div class="col-md-12 mb-4">
@@ -46,6 +58,7 @@ RecommendedPapers
         </div>
         {% endfor %}
     </div>
+{% endif %}
 </div>
 
 <script>

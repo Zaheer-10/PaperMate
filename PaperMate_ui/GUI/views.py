@@ -13,72 +13,35 @@ from crossref.restful import Works
 import requests
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from django.shortcuts import render
+from .models import RecentPaper  # Import your RecentPaper model
+import speech_recognition as sr
 
 
 Paper.populate_database()
 
 
-# def index(request):
-#     return render(request, 'index.html')
 
 def index(request):
-    # Define the URL for the arXiv API query
-    url = "http://export.arxiv.org/api/query?search_query=cat:cs.LG+OR+cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.CV&sortBy=lastUpdatedDate&sortOrder=descending&max_results=100"
-    # Send a GET request to the URL and get the response
-    response = requests.get(url)
+    ml_papers = RecentPaper.objects.filter(category='cs.CL').order_by("-published_date")[:3]
+    nlp_papers = RecentPaper.objects.filter(category='cs.LG').order_by("-published_date")[:3]
+    ai_papers = RecentPaper.objects.filter(category='cs.AI').order_by("-published_date")[:3]
+    cv_papers = RecentPaper.objects.filter(category='cs.CV').order_by("-published_date")[:3]
 
-    if response.status_code == 200:
-        # Parse the XML data from the response content
-        root = ET.fromstring(response.content)
+    # print("ML Papers Count:", ml_papers.count())
+    # print("NLP Papers Count:", nlp_papers.count())
+    # print("AI Papers Count:", ai_papers.count())
+    # print("CV Papers Count:", cv_papers.count())
 
-        # Initialize empty lists for each category
-        ml_papers = []  # Machine learning papers
-        ai_papers = []  # Artificial intelligence papers
-        nlp_papers = []  # Natural language processing papers
-        cv_papers = []  # Computer vision papers
-        # Loop through each entry
-        for entry in root.findall("{http://www.w3.org/2005/Atom}entry"):
-            # Extract the date string
-            published_date_str = entry.find("{http://www.w3.org/2005/Atom}published").text
-    
-            # Convert the date string to a datetime object
-            published_date = datetime.strptime(published_date_str, "%Y-%m-%dT%H:%M:%SZ")
-    
-            # Format the datetime object as a readable date string
-            formatted_date = published_date.strftime("%d - %B - %Y")  # Example format: "09 - August - 2023"
-            # Get the category of the paper
-            category = entry.find("{http://www.w3.org/2005/Atom}category").attrib["term"]
+    context = {
+        'ml_papers': ml_papers,
+        'nlp_papers': nlp_papers,
+        'ai_papers': ai_papers,
+        'cv_papers': cv_papers,
+    }
 
-            # Get paper details
-            paper = {
-                "link": entry.find("{http://www.w3.org/2005/Atom}id").text,
-                "title": entry.find("{http://www.w3.org/2005/Atom}title").text,
-                "authors": ", ".join([author.find("{http://www.w3.org/2005/Atom}name").text for author in entry.findall("{http://www.w3.org/2005/Atom}author")]),
-                "summary": entry.find("{http://www.w3.org/2005/Atom}summary").text,
-                "date": entry.find("{http://www.w3.org/2005/Atom}published").text,
-            }
 
-            # Append the entry to the corresponding list based on the category
-            if category == "cs.LG" and len(ml_papers) < 3:
-                ml_papers.append(paper)
-            elif category == "cs.AI" and len(ai_papers) < 3:
-                ai_papers.append(paper)
-            elif category == "cs.CL" and len(nlp_papers) < 3:
-                nlp_papers.append(paper)
-            elif category == "cs.CV" and len(cv_papers) < 3:
-                cv_papers.append(paper)
-
-        # Create a context dictionary to pass the papers to the template
-        context = {
-            'ml_papers': ml_papers,
-            'ai_papers': ai_papers,
-            'nlp_papers': nlp_papers,
-            'cv_papers': cv_papers,
-            'formatted_date': formatted_date, 
-        }
-
-        # Render the template with the context
-        return render(request, 'index.html', context)
+    return render(request, 'index.html', context)
 
 
 def recommendations(request):
@@ -92,12 +55,22 @@ def qa_page(request):
 
 
 def search_papers(request):
+    # sourcery skip: assign-if-exp, boolean-if-exp-identity, remove-unnecessary-cast
     PATH_SENTENCES = Path.cwd() / "Models/Sentences"
     PATH_EMBEDDINGS = Path.cwd() / "Models/Embeddings"
 
     if request.method == 'POST':
         query = request.POST.get('query', '')
+        recognized_text = request.POST.get('recognized_text', '')
 
+        if recognized_text:
+            query += ' ' + recognized_text
+        
+        # Check if either the query or recognized_text is empty
+        if not query.strip() and not recognized_text.strip():
+            return render(request, 'index.html', {'error_message': 'Please enter a query or use speech input.'})
+        
+        
         # Load pre-trained SentenceTransformer model
         model = SentenceTransformer('all-MiniLM-L6-v2')
         embeddings_path = PATH_EMBEDDINGS / "Embeddings.pkl"
@@ -109,10 +82,15 @@ def search_papers(request):
         with open(embeddings_path, 'rb') as f:
             embeddings_data = pickle.load(f)
 
+        # Generate a prompt template based on the user query
+        prompt_template = f"Recommended ArXiv papers related to: '{query}'"
+        # Generate a prompt template based on the user query
+        # prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
+
         # Encode user query and calculate cosine similarity
-        query_embedding = model.encode([query])
+        query_embedding = model.encode([prompt_template])
         cosine_scores = util.pytorch_cos_sim(query_embedding, embeddings_data)[0]
-        
+
         # Get indices of top 5 similar papers
         top_indices = cosine_scores.argsort(descending=True)[:4]
         top_indices = top_indices.cpu().numpy()  # Convert to numpy array
@@ -120,14 +98,20 @@ def search_papers(request):
 
         # Get paper details from the database
         recommended_papers = Paper.objects.filter(title__in=top_paper_titles)
-        # Print for debugging
-        # print("Recommended papers queryset:", recommended_papers)
-
-
-        return render(request, 'recommendations.html', {'papers': recommended_papers, 'recommended_papers': recommended_papers})
-
+        
+        if len(recommended_papers) == 0:
+            search_error = True
+        else:
+            search_error = False
+        return render(request, 'recommendations.html', {'papers': recommended_papers, 'recommended_papers': recommended_papers , 'search_error': search_error})
+    return render(request, 'index.html')
 
 def recommendations(request):
     papers = Paper.objects.all()
     return render(request, 'recommendations.html', {'papers': papers})
 
+# def about(request):
+#     return render(request , 'about.html')
+
+def about(request):  
+    return render(request, 'about.html')

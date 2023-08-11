@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+About US
+{% endblock %}
+
+{% block details %}
+
+ <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+    }
+    .card-container {
+      width: 80%;
+      margin: 0 auto;
+      display: flex;
+      /* justify-content: center; */
+      /* align-items: center; */
+      /* height: 100vh; */
+    }
+    .card {
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+      text-align: center;
+      /* max-width: 800px; */
+      margin: 0 auto;
+    }
+    .card-content h2 {
+      font-size: 1.5rem;
+      margin-top: 0;
+      color: #80d0c7;
+    }
+    .card-content p {
+      font-size: 1rem;
+      color: #030303;
+      line-height: 1.6;
+      align-items: left;
+      justify-content: last baseline;
+    }
+  </style>
+
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-4 text-center text-white">About Us</h1>
+</header>
+
+
+
+<div class="card-container mt-5 ">
+    <div class="card">
+      <div class="card-content">
+        <h2>Welcome to PaperMate</h2>
+        <p>Welcome to PaperMate, the cutting-edge solution designed to revolutionize the way you explore machine learning research. As a passionate advocate for the latest advancements in machine learning, deep learning, and NLP, I recognized the need to simplify the overwhelming process of discovering relevant academic papers across various conferences and journals.</p>
+        <p>PaperMate was born from a desire to bridge the gap between the wealth of research and those hungry to learn from it – whether you're a researcher, student, or simply passionate about the field. Our tool employs advanced natural language processing techniques to analyze the content of research papers and match them with your individual interests. No more sifting through an endless sea of papers; PaperMate does the heavy lifting, so you can focus on what truly matters – exploring the cutting edge of knowledge.</p>
+        <p>Our journey begins by collecting an extensive array of machine learning papers from the esteemed arXiv website. Through meticulous data preprocessing and feature extraction, we transform these papers into a symphony of numerical insights, reflective of your unique interests. By harnessing the power of cosine similarity, PaperMate crafts personalized recommendations that resonate with you, presenting the top four most relevant papers for each interest. These recommendations come complete with abstracts and links, making your exploration seamless and insightful. PaperMate is more than a tool; it's an expedition into the uncharted realms of machine learning's evolving symphony. With every update, freshly curated data from arXiv's hallowed halls is seamlessly integrated, rendering PaperMate an evergreen companion for knowledge seekers, skill cultivators, and visionaries alike. As we tread the path of inquiry, PaperMate's harmonious recommendations offer a beacon of light, illuminating our way through the labyrinthine corridors of academia.</p>
+        <p>Embrace PaperMate and embrace the future. Propel yourself into an epoch where learning is both an art and a science, where inspiration is not elusive, and where every curious mind can discover their symphony in the universe of machine learning.</p>
+      </div>
+    </div>
+  </div>
+
+
+
+{% endblock %}
