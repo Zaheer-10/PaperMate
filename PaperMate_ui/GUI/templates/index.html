@@ -7,11 +7,42 @@ RecommendedPapers
 
 {% block details %}
 <style>
+    /* Style for the additional buttons pop-up */
+    #additionalButtons {
+        position: absolute;
+        top: -5%;
+        right: 24%;
+        transform: translate(50%, -50%);
+        display: none;
+        z-index: 1;
+    }
+
+    /* Adjust the positioning of the stop and clear buttons */
+    #stopButton,
+    #clearButton {
+        flex-direction: column;
+        margin: 2px;
+
+    }
+
+    /* Adjust the icon size */
+    #stopButton i,
+    #clearButton i {
+        font-size: 1.2em;
+        display: inline;
+    }
+
     .animated-error {
         display: none;
         animation-duration: 1s;
         animation-fill-mode: forwards;
         opacity: 0;
+    }
+
+    #errorMessage {
+        background-color: rgba(255, 5, 5, 0.439);
+        height: 50px;
+        color: whitesmoke;
     }
 
     @keyframes fadeInOut {
@@ -27,16 +58,12 @@ RecommendedPapers
     }
 </style>
 
-
-
-
 <section class="hero-section d-flex justify-content-center align-items-center" id="section_1">
     <div class="container">
         <div class="row">
             <div class="col-lg-8 col-12 mx-auto">
                 {% if error_message %}
-
-                <div id="errorMessage" class="alert alert-danger animated-error" role="alert">
+                <div id="errorMessage" class="alert alert-danger animated-error text-center" role="alert">
                     {{ error_message }}
                 </div>
                 {% endif %}
@@ -49,22 +76,28 @@ RecommendedPapers
                         <input type="text" name="query" class="form-control" id="searchInput"
                             placeholder="Search Something........" autocomplete="on" style="border: none !important;">
                         <input type="hidden" id="recognizedText" name="recognized_text">
-                        <button type="button" id="micButton" class="btn btn-outline-success  btn-sm py-1 px-3">
-                            <i class="bi-mic"></i>
+                        <div id="additionalButtons">
+                            <button type="button" id="stopButton" class="btn btn-outline-warning btn-sm py-1 px-3"
+                                style="border-radius: 100%;">
+                                <i class="bi-stop"></i>
+                            </button>
+                            <button type="button" id="clearButton" class="btn btn-outline-danger btn-sm py-1 px-3"
+                                style="border-radius: 100%;">
+                                <i class="bi-x"></i>
+                            </button>
+                        </div>
+                        <button type="button" id="micButton" class="btn btn-outline-success btn-sm py-1 px-3"
+                            style="border-radius: 70%; margin-right: 4px;">
+                            <i class="bi-mic rounded-icon"></i>
                         </button>
-                        <button type="button" id="stopButton" class="btn btn-outline-warning  btn-sm py-0 px-2">
-                            <i class="bi-stop"></i>
-                        </button>
-                        <button type="button" id="clearButton" class="btn btn-outline-danger  btn-sm py-0 px-2 ">
-                            <i class="bi-x"></i>
-                        </button>
-                        <button type="submit" class="form-control">Search</button>
+                        <button type="submit" class="form-control" style="margin-left: 1rem;">Search</button>
                     </div>
                 </form>
             </div>
         </div>
     </div>
 </section>
+
 
 
 <section class="featured-section">
@@ -77,15 +110,12 @@ RecommendedPapers
                         <div class="d-flex">
                             <div>
                                 <h5 class="mb-2">Introducing PaperMate📜</h5>
-
                                 <p class="mb-0">👉 Get personalized machine learning paper recommendations. NLP-powered
                                     for 4 top papers per interest, updated monthly with fresh arXiv data. Stay informed,
                                     learn, and spark your projects.</p>
                             </div>
-
                             <span class="badge bg-design rounded-pill ms-auto"></span>
                         </div>
-
                         <img src=" {% static 'images/topics/undraw_Remote_design_team_re_urdx.png' %}"
                             class="custom-block-image img-fluid" alt="">
                     </a>
@@ -120,7 +150,6 @@ RecommendedPapers
         </div>
     </div>
 </section>
-
 
 <section class="explore-section section-padding" id="section_2">
     <div class="container">
@@ -192,7 +221,7 @@ RecommendedPapers
                                         alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info" target="_blank">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -226,7 +255,7 @@ RecommendedPapers
                                         alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info" target="_blank">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -262,7 +291,7 @@ RecommendedPapers
                                         class="custom-block-image img-fluid" alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info" target="_blank">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -297,7 +326,7 @@ RecommendedPapers
                                         alt="">
 
                                     <div class="d-flex justify-content-center align-items-center mt-2">
-                                        <a href="{{ paper.link }}" class="btn btn-outline-info">Read Full Paper</a>
+                                        <a href="{{ paper.link }}" class="btn btn-outline-info" target="_blank">Read Full Paper</a>
                                     </div>
                                 </div>
                             </div>
@@ -376,6 +405,7 @@ RecommendedPapers
     const micButton = document.getElementById('micButton');
     const stopButton = document.getElementById('stopButton');
     const clearButton = document.getElementById('clearButton');
+    const additionalButtons = document.getElementById('additionalButtons');
 
     if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -396,9 +426,11 @@ RecommendedPapers
         micButton.addEventListener('click', () => {
             if (!recognition.recognizing) {
                 micButton.classList.add('active');
+                additionalButtons.style.display = 'block';
                 recognition.start();
             } else {
                 micButton.classList.remove('active');
+                additionalButtons.style.display = 'none';
                 recognition.stop();
             }
         });
@@ -406,6 +438,7 @@ RecommendedPapers
         stopButton.addEventListener('click', () => {
             recognition.stop();
             micButton.classList.remove('active');
+            additionalButtons.style.display = 'none';
         });
 
         clearButton.addEventListener('click', () => {
@@ -421,14 +454,14 @@ RecommendedPapers
     if (errorMessage) {
         errorMessage.style.display = 'block';
         errorMessage.style.animationName = 'fadeInOut';
-        errorMessage.style.animationIterationCount = '1';
+        errorMessage.style.animationIterationCount = '3';
         errorMessage.style.animationTimingFunction = 'ease-in-out';
         errorMessage.style.animationPlayState = 'running';
 
         // Hide the error message after 5 seconds
         setTimeout(() => {
             errorMessage.style.animationName = 'fadeInOut';
-            errorMessage.style.animationIterationCount = '1';
+            errorMessage.style.animationIterationCount = '3';
             errorMessage.style.animationTimingFunction = 'ease-in-out';
             errorMessage.style.animationPlayState = 'running';
 

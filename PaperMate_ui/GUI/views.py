@@ -1,28 +1,32 @@
-from django.shortcuts import redirect, render , HttpResponse
-from django.shortcuts import render
-import arxiv
-from django.shortcuts import render
-from django.http import JsonResponse
-from .models import Paper
-from sentence_transformers import SentenceTransformer, util
 import pickle
-from pathlib import Path
-from django.shortcuts import render
-from arxiv import Client
-from crossref.restful import Works
 import requests
-import xml.etree.ElementTree as ET
+from pathlib import Path
+from .models import Paper
 from datetime import datetime
-from django.shortcuts import render
-from .models import RecentPaper  # Import your RecentPaper model
 import speech_recognition as sr
+from .models import RecentPaper 
+from django.shortcuts import render
+import xml.etree.ElementTree as ET
+from sentence_transformers import SentenceTransformer, util
 
-
+# Populating the 'Paper' database with data.
 Paper.populate_database()
 
-
-
+# ----------------------------------------------Index---------------------------------------------------------------------------------------
 def index(request):
+    
+    """
+    Render the index page of the Django web application.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content of the index page with recent research papers categorized for display.
+    steps:
+         1. Retrieving recent papers from different categories and passing through the context
+    """
+    
     ml_papers = RecentPaper.objects.filter(category='cs.CL').order_by("-published_date")[:3]
     nlp_papers = RecentPaper.objects.filter(category='cs.LG').order_by("-published_date")[:3]
     ai_papers = RecentPaper.objects.filter(category='cs.AI').order_by("-published_date")[:3]
@@ -32,44 +36,59 @@ def index(request):
     # print("NLP Papers Count:", nlp_papers.count())
     # print("AI Papers Count:", ai_papers.count())
     # print("CV Papers Count:", cv_papers.count())
-
+    
     context = {
         'ml_papers': ml_papers,
         'nlp_papers': nlp_papers,
         'ai_papers': ai_papers,
         'cv_papers': cv_papers,
     }
-
-
     return render(request, 'index.html', context)
 
-
-def recommendations(request):
-    return render(request , "recommendations.html" )
-    
-
+# ----------------------------------------------Q&A---------------------------------------------------------------------------------------
 
 def qa_page(request):
+    """
+    Render the Q&A page of the Django web application.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content of the Q&A page.
+    """
     return render(request, 'qa.html')
 
-
+# ----------------------------------------------search_papers---------------------------------------------------------------------------------------
 
 def search_papers(request):
-    # sourcery skip: assign-if-exp, boolean-if-exp-identity, remove-unnecessary-cast
+    """
+    Search for relevant research papers using a user query and recognized speech, and display recommended papers.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content showing recommended research papers based on the user's query.
+    """
+    # sourcery skip: assign-if-exp, boolean-if-exp-identity, extract-method, remove-unnecessary-cast, use-f string-for-concatenation
+    
+    # Setting up paths for pre-trained models and data.
     PATH_SENTENCES = Path.cwd() / "Models/Sentences"
     PATH_EMBEDDINGS = Path.cwd() / "Models/Embeddings"
 
     if request.method == 'POST':
+        # Retrieving user input and recognized speech.
         query = request.POST.get('query', '')
         recognized_text = request.POST.get('recognized_text', '')
 
+        # Combining query and recognized speech if available.
         if recognized_text:
             query += ' ' + recognized_text
         
         # Check if either the query or recognized_text is empty
         if not query.strip() and not recognized_text.strip():
             return render(request, 'index.html', {'error_message': 'Please enter a query or use speech input.'})
-        
         
         # Load pre-trained SentenceTransformer model
         model = SentenceTransformer('all-MiniLM-L6-v2')
@@ -83,15 +102,14 @@ def search_papers(request):
             embeddings_data = pickle.load(f)
 
         # Generate a prompt template based on the user query
-        prompt_template = f"Recommended ArXiv papers related to: '{query}'"
-        # Generate a prompt template based on the user query
-        # prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
+        # prompt_template = f"Recommended ArXiv papers related to: '{query}'"
+        prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
 
-        # Encode user query and calculate cosine similarity
+        # Encoding user query and calculating cosine similarity.
         query_embedding = model.encode([prompt_template])
         cosine_scores = util.pytorch_cos_sim(query_embedding, embeddings_data)[0]
 
-        # Get indices of top 5 similar papers
+        # Get indices of top 4 similar papers
         top_indices = cosine_scores.argsort(descending=True)[:4]
         top_indices = top_indices.cpu().numpy()  # Convert to numpy array
         top_paper_titles = [sentences_data[i.item()] for i in top_indices]  # Access elements using integer indices
@@ -106,12 +124,33 @@ def search_papers(request):
         return render(request, 'recommendations.html', {'papers': recommended_papers, 'recommended_papers': recommended_papers , 'search_error': search_error})
     return render(request, 'index.html')
 
+# ----------------------------------------------Recommendations---------------------------------------------------------------------------------------
+
 def recommendations(request):
+    """
+    Retrieve and render all research paper recommendations for display on the recommendations page.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content displaying all recommended research papers.
+    """
+    
+    # Retrieving all papers from the 'Paper' model.
     papers = Paper.objects.all()
     return render(request, 'recommendations.html', {'papers': papers})
 
-# def about(request):
-#     return render(request , 'about.html')
+# ----------------------------------------------About---------------------------------------------------------------------------------------
 
 def about(request):  
+    """
+    Render the 'About' page of the Django web application.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content of the 'About' page.
+    """
     return render(request, 'about.html')
