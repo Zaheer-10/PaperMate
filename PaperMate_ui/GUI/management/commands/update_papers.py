@@ -1,14 +1,30 @@
-from django.core.management.base import BaseCommand
-from django.utils import timezone
 import requests
+from datetime import datetime
+from django.utils import timezone
 import xml.etree.ElementTree as ET
 from GUI.models import RecentPaper
-from datetime import datetime
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
+    """
+    Custom management command to fetch and update recent papers.
+    
+    Usage:
+    python manage.py update_recent_papers
+    """
+    
     help = 'Fetch and update recent papers'
-
+    
+    
+    # Define the command's functionality.
     def handle(self, *args, **options):
+        """
+        Execute the custom command to fetch and update recent papers.
+        
+        Args:
+            *args: Additional arguments.
+            **options: Command options.
+        """
         url = "http://export.arxiv.org/api/query?search_query=cat:cs.statML+OR+cat:cs.AI+OR+cat:cs.CL+OR+cat:cs.CV&sortBy=lastUpdatedDate&sortOrder=descending&max_results=150"
         response = requests.get(url)
 

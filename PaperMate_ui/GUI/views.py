@@ -45,19 +45,6 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
-# ----------------------------------------------Q&A---------------------------------------------------------------------------------------
-
-def qa_page(request):
-    """
-    Render the Q&A page of the Django web application.
-    
-    Args:
-        request (HttpRequest): The HTTP request made by the user.
-    
-    Returns:
-        HttpResponse: The rendered HTML content of the Q&A page.
-    """
-    return render(request, 'qa.html')
 
 # ----------------------------------------------search_papers---------------------------------------------------------------------------------------
 
@@ -94,7 +81,7 @@ def search_papers(request):
         model = SentenceTransformer('all-MiniLM-L6-v2')
         embeddings_path = PATH_EMBEDDINGS / "Embeddings.pkl"
         sentences_path = PATH_SENTENCES / "Sentences.pkl"
-
+ 
         # Load pre-calculated sentence embeddings
         with open(sentences_path, 'rb') as f:
             sentences_data = pickle.load(f)
@@ -102,8 +89,8 @@ def search_papers(request):
             embeddings_data = pickle.load(f)
 
         # Generate a prompt template based on the user query
-        # prompt_template = f"Recommended ArXiv papers related to: '{query}'"
-        prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
+        prompt_template = f"Recommended ArXiv papers related to: '{query}'"
+        # prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
 
         # Encoding user query and calculating cosine similarity.
         query_embedding = model.encode([prompt_template])
@@ -141,6 +128,19 @@ def recommendations(request):
     papers = Paper.objects.all()
     return render(request, 'recommendations.html', {'papers': papers})
 
+# ----------------------------------------------Q&A---------------------------------------------------------------------------------------
+
+def qa_page(request):
+    """
+    Render the Q&A page of the Django web application.
+    
+    Args:
+        request (HttpRequest): The HTTP request made by the user.
+    
+    Returns:
+        HttpResponse: The rendered HTML content of the Q&A page.
+    """
+    return render(request, 'qa.html')
 # ----------------------------------------------About---------------------------------------------------------------------------------------
 
 def about(request):  

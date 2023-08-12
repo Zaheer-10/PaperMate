@@ -1,15 +1,15 @@
-from django.db import models
 import csv
 from pathlib import Path
 from django.db import models
 from django.utils import timezone
+
+# Model - 1
 class Paper(models.Model):
     title = models.CharField(max_length=110)
     abstract = models.TextField()
     terms = models.CharField(max_length=20)
     url = models.URLField()
     ids = models.CharField(max_length=20) 
-    # Adjust the max length as needed
     
     @classmethod
     def populate_database(cls):
@@ -36,14 +36,11 @@ class Paper(models.Model):
         else:
             print("CSV file not found")
     
-# class Feedback(models.Model):
-    # rating = models.IntegerField(choices=[(1, "😕"), (2, "😐"), (3, "🙂")])
-    # comments = models.TextField(blank=True)
 
-
+#Model 2
 class RecentPaper(models.Model):
     title = models.CharField(max_length=110)
-    category = models.CharField(max_length=20)  # Category like 'Machine Learning', 'NLP', 'AI', 'Computer Vision'
+    category = models.CharField(max_length=20)  
     link = models.URLField()
     authors = models.CharField(max_length=200)
     published_date = models.DateTimeField(default=timezone.now)

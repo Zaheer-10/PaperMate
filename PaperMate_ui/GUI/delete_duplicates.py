@@ -1,16 +1,31 @@
-from django.core.management.base import BaseCommand
+import math
 from GUI.models import Paper
 from django.db import transaction
-import math
+from django.core.management.base import BaseCommand
 
 class Command(BaseCommand):
+    """
+    Custom management command to delete duplicate records from the Paper model.
+    
+    Usage:
+    python manage.py delete_duplicates <batch_size>
+    """
     help = 'Deletes duplicate records from the Paper model'
 
     def add_arguments(self, parser):
         parser.add_argument('batch_size', type=int, default=1000, help='Batch size for deletion')
+        
+        
 
     @transaction.atomic
     def handle(self, *args, **options):
+        """
+        Execute the custom command to delete duplicate records.
+        
+        Args:
+            *args: Additional arguments.
+            **options: Command options.
+        """
         batch_size = options['batch_size']
         total_duplicates = Paper.objects.count()
         batches = math.ceil(total_duplicates / batch_size)
