@@ -10,6 +10,7 @@ urlpatterns = [
     path('recommendations/', views.recommendations, name='recommendations'),  # Recommendations page
     path('about/', views.about, name='about'),  # About page
     path('qa/', views.qa_page, name='qa'),  # Q&A page
+    path('summarization/' , views.summarization , name='summarization') #summarization page
 ]
 
 # Serve static files during development

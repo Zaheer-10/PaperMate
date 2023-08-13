@@ -154,3 +154,7 @@ def about(request):
         HttpResponse: The rendered HTML content of the 'About' page.
     """
     return render(request, 'about.html')
+
+# -------------------------------------Summarization-------------------------------------------------------
+def summarization(request):
+    return render(request , 'summarization.html')
