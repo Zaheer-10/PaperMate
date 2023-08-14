@@ -9,7 +9,7 @@ class Paper(models.Model):
     abstract = models.TextField()
     terms = models.CharField(max_length=20)
     url = models.URLField()
-    ids = models.CharField(max_length=20) 
+    ids = models.CharField(max_length=20)
     
     @classmethod
     def populate_database(cls):
