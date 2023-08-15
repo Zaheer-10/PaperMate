@@ -44,6 +44,8 @@
                                 </span>
                                 <span id="collapse-{{ paper.id }}" style="display: none;">
                                     {{ paper.abstract }}
+                                
+
                                     <a href="#" onclick="toggleCollapse('{{ paper.id }}'); return false;"
                                         style="color: red;" class="glow">Close</a>
                                 </span>
@@ -51,6 +53,9 @@
                             </p>
                             <a href="{{ paper.url }}" class="btn custom-btn mt-3 glow" style="align-self: flex-start;"
                                 target="_blank">Read Full Paper</a>
+                            <a href="{% url 'summarize_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow"
+                                style="align-self: flex-start;" target="_blank">Summarize</a>
+
                         </div>
                     </div>
                 </div>

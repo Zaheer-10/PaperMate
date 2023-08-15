@@ -68,9 +68,6 @@
                         <li class="nav-item">
                             <a class="nav-link click-scroll" href="{% url 'about' %}">About Us</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link click-scroll" href="{% url 'summarization' %}">Summarization</a>
-                        </li>
 
 
                     </ul>
@@ -152,6 +149,13 @@
         <script src=" {% static 'js/jquery.sticky.js' %}"></script>
         <script src=" {% static 'js/click-scroll.js' %}"></script>
         <script src=" {% static 'js/custom.js' %}"></script>
+        <script>  
+        window.addEventListener("load", function () {
+            const loadingOverlay = document.getElementById("loading-overlay");
+            if (loadingOverlay) {
+                loadingOverlay.style.display = "none";
+            }
+        });</script>
 
 
 
