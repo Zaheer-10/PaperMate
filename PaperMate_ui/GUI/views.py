@@ -1,16 +1,35 @@
+import re
+import torch
 import pickle
+import torch
+import base64
+import PyPDF2
 import requests
+from io import BytesIO
 from pathlib import Path
 from .models import Paper
 from datetime import datetime
-import speech_recognition as sr
 from .models import RecentPaper 
+from transformers import pipeline
 from django.shortcuts import render
+from transformers import pipeline
 import xml.etree.ElementTree as ET
+from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404
 from sentence_transformers import SentenceTransformer, util
+from transformers import T5Tokenizer, T5ForConditionalGeneration
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+
 
 # Populating the 'Paper' database with data.
 Paper.populate_database()
+
+
+#model for text-summarization
+checkpoint = "MBZUAI/LaMini-Flan-T5-248M"
+tokenizer = T5Tokenizer.from_pretrained(checkpoint)
+base_model = T5ForConditionalGeneration.from_pretrained(checkpoint, device_map='auto', torch_dtype=torch.float32)
+
 
 # ----------------------------------------------Index---------------------------------------------------------------------------------------
 def index(request):
@@ -89,8 +108,8 @@ def search_papers(request):
             embeddings_data = pickle.load(f)
 
         # Generate a prompt template based on the user query
-        prompt_template = f"Recommended ArXiv papers related to: '{query}'"
-        # prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
+        # prompt_template = f"Recommended ArXiv papers related to: '{query}'"
+        prompt_template = f"Could you kindly generate top ArXiv paper recommendations based on : '{query}'? Your focus on recent research and relevant papers is greatly appreciated."
 
         # Encoding user query and calculating cosine similarity.
         query_embedding = model.encode([prompt_template])
@@ -156,5 +175,62 @@ def about(request):
     return render(request, 'about.html')
 
 # -------------------------------------Summarization-------------------------------------------------------
-def summarization(request):
-    return render(request , 'summarization.html')
+def summarize_paper(request, paper_id):
+    """
+    Retrieve and render recommended research paper summaries for display on the summarization page along with the pdf viewer.
+
+    Args:
+        request (HttpRequest): The HTTP request made by the user(summarize).
+        paper_id (int): Identifier for the specific paper being summarized (corresponding Paper ID).
+
+    Returns:
+        HttpResponse: The rendered HTML content displaying the summarized research paper and view the original pdf visually in the page.
+    """
+
+    
+    paper = get_object_or_404(Paper, ids=paper_id)
+    
+    # Define the PDF URL
+    pdf_url = f"https://arxiv.org/pdf/{paper.ids}.pdf"
+
+    # Download the PDF content using requests
+    response = requests.get(pdf_url)
+    pdf_content = response.content
+    
+    pdf_base64 = base64.b64encode(pdf_content).decode("utf-8")
+    # Create a PDF reader
+    pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_content))
+
+    # Extract text from pages 2 to 5 (index 1 to 4)
+    start_page = 1  # Page index to start from
+    end_page = min(start_page + 4, len(pdf_reader.pages))  # End at page index 5 or last page, whichever comes first
+
+    extracted_text = ""
+    for page_number in range(start_page, end_page):
+        page = pdf_reader.pages[page_number]
+        extracted_text += page.extract_text()
+
+    # Split the extracted text into smaller chunks
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+    text_chunks = text_splitter.split_text(extracted_text)
+
+    # Combine the chunks into final text
+    final_text = "".join(text_chunks)
+    final_text = re.sub(r'[^a-zA-Z0-9\s]', '', final_text)
+    final_text   = re.sub(r'\S*@\S*\s?', '', final_text)
+    final_text= final_text.rstrip()
+
+    pipe_sum = pipeline('summarization', model = base_model,tokenizer = tokenizer,max_length = 512, min_length = 50)
+    result = pipe_sum(final_text)
+    result = result[0]['summary_text']
+    print("pdf_base64:", pdf_base64[:100]) 
+    
+    context = {
+        'paper': paper,
+        'result' : result,
+        'pdf_base64': pdf_base64,
+        # 'pdf_text': pdf_text  # Pass the extracted PDF text to the template
+    }
+    
+    return render(request, 'summarization.html', context)
+    
