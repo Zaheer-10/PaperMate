@@ -5,6 +5,37 @@
 
 {% block details %}
 
+<style>
+.loading-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.loading-spinner {
+  border: 6px solid #f3f3f3;
+  border-top: 6px solid #3498db;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+</style>
+
 <header class="site-header d-flex flex-column justify-content-center align-items-center">
     <h1 class="mb-4 text-center text-white">Recommended Papers</h1>
 </header>
@@ -53,8 +84,13 @@
                             </p>
                             <a href="{{ paper.url }}" class="btn custom-btn mt-3 glow" style="align-self: flex-start;"
                                 target="_blank">Read Full Paper</a>
-                            <a href="{% url 'summarize_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow"
+                            <a id="summarizeButton"  href="{% url 'summarize_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow"
                                 style="align-self: flex-start;" target="_blank">Summarize</a>
+
+                             <div id="loadingOverlay" class="loading-overlay">
+                                <div class="loading-spinner"></div>
+                                    <pre id="loadingText" class="text-dange" style="font-weight: bolder;">Summarizing...</pre>
+                            </div>
 
                         </div>
                     </div>
@@ -84,7 +120,55 @@
             }
         }
     }
-</script>
+
+    const summarizeButton = document.getElementById("summarizeButton");
+    const loadingOverlay = document.getElementById("loadingOverlay");
+    const loadingText = document.getElementById("loadingText");
+
+    summarizeButton.addEventListener("click", async (event) => {
+    event.preventDefault(); // Prevent the default link behavior
+
+       const paperId = summarizeButton.getAttribute("href").split("/").slice(-2, -1)[0]; // Extract paper ID from the link
 
 
+        loadingOverlay.style.display = "flex";
+        loadingText.textContent = 'Summarizing...'; // Reset loading text
+
+        const startTime = performance.now(); // Record start time
+
+        try {
+                    const response = await fetch(`{% url 'summarize_paper' paper_id='__placeholder__' %}`.replace('__placeholder__', paperId));
+
+
+            const endTime = performance.now(); // Record end time
+            const loadingDuration = endTime - startTime; // Calculate loading duration
+
+            // Display loading text while loading
+            const loadingInterval = setInterval(() => {
+                loadingText.textContent = 'Loading...';
+            }, 500);
+
+            // Check if loading duration is over, and adjust the loading text accordingly
+            const checkLoadingInterval = setInterval(() => {
+                const elapsedTime = performance.now() - startTime;
+
+                if (elapsedTime >= loadingDuration) {
+                    clearInterval(loadingInterval);
+                    clearInterval(checkLoadingInterval);
+                    loadingText.textContent = 'Almost there...';
+                }
+            }, 500);
+
+            setTimeout(() => {
+                clearInterval(checkLoadingInterval);
+                loadingOverlay.style.display = 'none';
+                window.location.href = `{% url 'summarize_paper' paper_id='__placeholder__' %}`.replace('__placeholder__', paperId);
+
+            }, loadingDuration);
+        } catch (error) {
+            loadingText.textContent = 'Failed to load.';
+        }
+    });
+
+</script>   
 {% endblock %}

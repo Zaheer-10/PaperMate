@@ -1,7 +1,7 @@
 import re
+import time
 import torch
 import pickle
-import torch
 import base64
 import PyPDF2
 import requests
@@ -26,10 +26,12 @@ Paper.populate_database()
 
 
 #model for text-summarization
-checkpoint = "MBZUAI/LaMini-Flan-T5-248M"
-tokenizer = T5Tokenizer.from_pretrained(checkpoint)
-base_model = T5ForConditionalGeneration.from_pretrained(checkpoint, device_map='auto', torch_dtype=torch.float32)
-
+# checkpoint = "MBZUAI/LaMini-Flan-T5-248M"
+# tokenizer = T5Tokenizer.from_pretrained(checkpoint)
+# base_model = T5ForConditionalGeneration.from_pretrained(checkpoint, device_map='auto', torch_dtype=torch.float32)
+checkpoint = r"C:\Users\soulo\MACHINE_LEARNING\PaperMate\PaperMate_ui\GUI\LaMini-Flan-T5-248M"
+tokenizer = T5Tokenizer.from_pretrained(checkpoint , local_files_only=True)
+base_model = T5ForConditionalGeneration.from_pretrained(checkpoint , local_files_only=True)
 
 # ----------------------------------------------Index---------------------------------------------------------------------------------------
 def index(request):
@@ -186,17 +188,21 @@ def summarize_paper(request, paper_id):
     Returns:
         HttpResponse: The rendered HTML content displaying the summarized research paper and view the original pdf visually in the page.
     """
+    start_time = time.time()
 
-    
+    print("Going to ArXiv")
     paper = get_object_or_404(Paper, ids=paper_id)
     
     # Define the PDF URL
     pdf_url = f"https://arxiv.org/pdf/{paper.ids}.pdf"
 
     # Download the PDF content using requests
+    print("Requesting PDF url")
     response = requests.get(pdf_url)
     pdf_content = response.content
+    print("Got respond")
     
+    print("pdf_base64")
     pdf_base64 = base64.b64encode(pdf_content).decode("utf-8")
     # Create a PDF reader
     pdf_reader = PyPDF2.PdfReader(BytesIO(pdf_content))
@@ -204,26 +210,32 @@ def summarize_paper(request, paper_id):
     # Extract text from pages 2 to 5 (index 1 to 4)
     start_page = 1  # Page index to start from
     end_page = min(start_page + 4, len(pdf_reader.pages))  # End at page index 5 or last page, whichever comes first
-
+    print("Extracting is Under Progress")
     extracted_text = ""
     for page_number in range(start_page, end_page):
         page = pdf_reader.pages[page_number]
         extracted_text += page.extract_text()
-
+    print("Splitting into Chunks")
     # Split the extracted text into smaller chunks
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
     text_chunks = text_splitter.split_text(extracted_text)
 
+    print("Cleaning")
     # Combine the chunks into final text
     final_text = "".join(text_chunks)
     final_text = re.sub(r'[^a-zA-Z0-9\s]', '', final_text)
     final_text   = re.sub(r'\S*@\S*\s?', '', final_text)
     final_text= final_text.rstrip()
-
+    print("Cleaned and passing to the model")
     pipe_sum = pipeline('summarization', model = base_model,tokenizer = tokenizer,max_length = 512, min_length = 50)
+    print("Summarizing.......")
     result = pipe_sum(final_text)
     result = result[0]['summary_text']
     print("pdf_base64:", pdf_base64[:100]) 
+    end_time = time.time()
+    elapsed_time = end_time - start_time
+    print(f"Elapsed time: {elapsed_time:.2f} seconds")
+    print("Done")
     
     context = {
         'paper': paper,
