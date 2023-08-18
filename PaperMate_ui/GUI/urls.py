@@ -11,6 +11,7 @@ urlpatterns = [
     path('about/', views.about, name='about'),  # About page
     path('qa/', views.qa_page, name='qa'),  # Q&A page
     path('summarize/<str:paper_id>/', views.summarize_paper, name='summarize_paper'),
+    path('download_paper/<str:paper_id>/', views.download_paper, name='download_paper'),
 
 
 ]

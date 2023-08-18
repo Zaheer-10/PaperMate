@@ -1,4 +1,5 @@
 import re
+import os
 import time
 import torch
 import pickle
@@ -11,7 +12,7 @@ from .models import Paper
 from datetime import datetime
 from .models import RecentPaper 
 from transformers import pipeline
-from django.shortcuts import render
+from django.shortcuts import render , redirect
 from transformers import pipeline
 import xml.etree.ElementTree as ET
 from django.shortcuts import render, get_object_or_404
@@ -19,6 +20,11 @@ from django.shortcuts import render, get_object_or_404
 from sentence_transformers import SentenceTransformer, util
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+
+
+
+from django.http import  FileResponse
+
 
 
 # Populating the 'Paper' database with data.
@@ -246,3 +252,34 @@ def summarize_paper(request, paper_id):
     
     return render(request, 'summarization.html', context)
     
+# ---------------------------------------------download_paper---------------------------------------------------------------------------
+
+
+# ... (other view functions)
+
+def download_paper(request, paper_id):
+    # sourcery skip: extract-method, hoist-statement-from-if
+    paper = get_object_or_404(Paper, ids=paper_id)
+    pdf_url = f"https://arxiv.org/pdf/{paper.ids}.pdf"
+
+    CUSTOM_SOURCE_DOCUMENTS_PATH = "C:/Users/soulo/MACHINE_LEARNING/PaperMate/PaperMate_ui/GUI/source_documents"
+
+    print("Construct the file path for the downloaded PDF")
+    file_path = os.path.join(CUSTOM_SOURCE_DOCUMENTS_PATH, f"paperid_{paper.ids}.pdf")
+
+    if os.path.exists(file_path):
+        print("File already exists, redirect to talk2me.html")
+        return render(request, 'talk2me.html')
+    else:
+        # Download the PDF content
+        response = requests.get(pdf_url)
+        pdf_content = response.content
+
+        print("Save the PDF content to the file path")
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Create directories if not exists
+        with open(file_path, 'wb') as f:
+            f.write(pdf_content)
+
+        print("Redirect to the talk2me.html page")
+        return render(request, 'talk2me.html')
+

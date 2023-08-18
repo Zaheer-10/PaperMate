@@ -85,7 +85,11 @@
                             <a href="{{ paper.url }}" class="btn custom-btn mt-3 glow" style="align-self: flex-start;"
                                 target="_blank">Read Full Paper</a>
                             <a id="summarizeButton"  href="{% url 'summarize_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow"
-                                style="align-self: flex-start;" target="_blank">Summarize</a>
+                                style="align-self: flex-start;" ">Summarize</a>
+
+<a id="download_paper" href="{% url 'download_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow"
+   style="align-self: flex-start;">Talk to Me</a>
+
 
                              <div id="loadingOverlay" class="loading-overlay">
                                 <div class="loading-spinner"></div>
@@ -169,6 +173,27 @@
             loadingText.textContent = 'Failed to load.';
         }
     });
+
+
+
+
+function downloadAndRedirect() {
+    const downloadButton = document.getElementById('download_paper');
+    const paperId = downloadButton.getAttribute('data-paper-id');
+
+    fetch(`/download_paper/${paperId}/`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                // Redirect to talk2me.html after download
+                window.location.href = '/path-to-talk2me.html';
+            } else {
+                alert('PDF download failed.');
+            }
+        });
+}
+
+
 
 </script>   
 {% endblock %}
