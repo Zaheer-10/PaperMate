@@ -24,6 +24,79 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 
 
 from django.http import  FileResponse
+from django.http import JsonResponse
+
+
+
+
+from django.conf import settings  # Import Django settings
+
+# !/usr/bin/env python3
+import os
+import glob
+from typing import List
+from dotenv import load_dotenv
+from multiprocessing import Pool
+from tqdm import tqdm
+
+from langchain.document_loaders import (
+    CSVLoader,
+    EverNoteLoader,
+    PyMuPDFLoader,
+    TextLoader,
+    UnstructuredEmailLoader,
+    UnstructuredEPubLoader,
+    UnstructuredHTMLLoader,
+    UnstructuredMarkdownLoader,
+    UnstructuredODTLoader,
+    UnstructuredPowerPointLoader,
+    UnstructuredWordDocumentLoader,
+)
+
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.docstore.document import Document
+print("Current directory:", os.getcwd())
+print("----------------------------------------------")
+from .pdf_constants  import CHROMA_SETTINGS
+from .ingest import process_documents, does_vectorstore_exist
+
+
+load_dotenv()
+
+
+# Load environment variables
+persist_directory = os.environ.get('PERSIST_DIRECTORY')
+source_directory = os.environ.get('SOURCE_DIRECTORY', 'source_documents')
+embeddings_model_name = os.environ.get('EMBEDDINGS_MODEL_NAME')
+chunk_size = 500
+chunk_overlap = 50
+
+
+
+
+from dotenv import load_dotenv
+from langchain.chains import RetrievalQA
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
+from langchain.vectorstores import Chroma
+from langchain.llms import GPT4All, LlamaCpp
+import os
+import argparse
+import time
+
+load_dotenv()
+
+embeddings_model_name = os.environ.get("EMBEDDINGS_MODEL_NAME")
+persist_directory = os.environ.get('PERSIST_DIRECTORY')
+
+model_type = os.environ.get('MODEL_TYPE')
+model_path = os.environ.get('MODEL_PATH')
+model_n_ctx = os.environ.get('MODEL_N_CTX')
+model_n_batch = int(os.environ.get('MODEL_N_BATCH',8))
+target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS',4))
+
 
 
 
@@ -255,31 +328,119 @@ def summarize_paper(request, paper_id):
 # ---------------------------------------------download_paper---------------------------------------------------------------------------
 
 
-# ... (other view functions)
 
 def download_paper(request, paper_id):
-    # sourcery skip: extract-method, hoist-statement-from-if
+    # sourcery skip: extract-duplicate-method, extract-method, hoist-statement-from-if, inline-variable, move-assign-in-block
     paper = get_object_or_404(Paper, ids=paper_id)
     pdf_url = f"https://arxiv.org/pdf/{paper.ids}.pdf"
-
     CUSTOM_SOURCE_DOCUMENTS_PATH = "C:/Users/soulo/MACHINE_LEARNING/PaperMate/PaperMate_ui/GUI/source_documents"
 
     print("Construct the file path for the downloaded PDF")
-    file_path = os.path.join(CUSTOM_SOURCE_DOCUMENTS_PATH, f"paperid_{paper.ids}.pdf")
+    file_path = os.path.join(CUSTOM_SOURCE_DOCUMENTS_PATH, f"{paper.ids}.pdf")
 
     if os.path.exists(file_path):
         print("File already exists, redirect to talk2me.html")
-        return render(request, 'talk2me.html')
+        return render(request, 'chat.html')
     else:
         # Download the PDF content
         response = requests.get(pdf_url)
         pdf_content = response.content
+        pdf_base64 = base64.b64encode(pdf_content).decode("utf-8")
+        print("Got pdf_base64:", pdf_base64[:100])
 
         print("Save the PDF content to the file path")
         os.makedirs(os.path.dirname(file_path), exist_ok=True)  # Create directories if not exists
         with open(file_path, 'wb') as f:
             f.write(pdf_content)
-
+        ingest()
         print("Redirect to the talk2me.html page")
-        return render(request, 'talk2me.html')
+        context = {
+        'pdf_base64': pdf_base64}
+        
+        return render(request, 'talk2me.html', context)
 
+
+def ingest():  
+    """Ingest a new document"""
+    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
+
+    if does_vectorstore_exist(persist_directory):
+        # Update and store locally vectorstore
+        print(f"Appending to existing vector store at {persist_directory}")
+        db = Chroma(persist_directory=persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
+        collection = db.get()
+        texts = process_documents([metadata['source'] for metadata in collection['metadatas']])
+        print("Creating embeddings. May take some minutes...")
+        db.add_documents(texts)
+    else:
+        # Create and store locally vectorstore
+        print("Creating new vectorstore")
+        texts = process_documents()
+        print("TEXT" , texts)
+        print("Creating embeddings. May take some minutes...")
+        db = Chroma.from_documents(texts, embeddings, persist_directory=persist_directory, client_settings=CHROMA_SETTINGS)
+    db.persist()
+    db = None
+
+    print("Ingestion complete! You can now run privateGPT.py to query your documents")
+
+qa = None;
+def readFileContent():
+    global qa
+    load_dotenv()
+
+    # Load environment variables
+    embeddings_model_name = os.environ.get("EMBEDDINGS_MODEL_NAME")
+    persist_directory = os.environ.get('PERSIST_DIRECTORY')
+    model_type = os.environ.get('MODEL_TYPE')
+    model_n_ctx = os.environ.get('MODEL_N_CTX')
+    model_n_batch = int(os.environ.get('MODEL_N_BATCH', 8))
+    target_source_chunks = int(os.environ.get('TARGET_SOURCE_CHUNKS', 4))
+
+    # Construct the absolute path to the model based on the Django project's root directory
+    base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # Path to the Django project's root
+    model_relative_path = "GUI/models/ggml-gpt4all-j-v1.3-groovy.bin"
+    model_path = os.path.join(base_path, model_relative_path)
+
+    # Your existing main code logic (excluding the main() function) here
+    embeddings = HuggingFaceEmbeddings(model_name=embeddings_model_name)
+    db = Chroma(persist_directory=persist_directory, embedding_function=embeddings, client_settings=CHROMA_SETTINGS)
+    retriever = db.as_retriever(search_kwargs={"k": target_source_chunks})
+    callbacks = []  # No streaming stdout callback for now
+    if model_type == "LlamaCpp":
+        llm = LlamaCpp(model_path=model_path, max_tokens=model_n_ctx, n_batch=model_n_batch, callbacks=callbacks, verbose=False)
+    elif model_type == "GPT4All":
+        llm = GPT4All(model=model_path, max_tokens=model_n_ctx, backend='gptj', n_batch=model_n_batch, callbacks=callbacks, verbose=False)
+    else:
+        raise Exception(f"Model type {model_type} is not supported. Please choose one of the following: LlamaCpp, GPT4All")
+
+    qa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=True)
+    
+
+def chatbot_response_gpt(request):
+    global qa
+    # Extract user's message from the GET request
+    user_message = request.GET.get('message', '')
+    print("User message:", user_message)
+    print(qa,'qaaaaaaaa1')
+    if qa is None:
+        readFileContent()
+    print(qa,'qaaaaaaaa2')
+
+    # Get the answer from the chain
+    start = time.time()
+    res = qa(user_message)
+    answer, docs = res['result'], res['source_documents']
+    end = time.time()
+    print("Response:", answer)
+    # Construct the response data
+    context = {
+        'user_message': user_message,
+        'response': answer,
+        'response_time': round(end - start, 2),
+        'source_documents': [doc.page_content for doc in docs]
+    }
+    return JsonResponse(context)
+
+def chatbot_response(request):
+    return render(request, 'chat.html' )

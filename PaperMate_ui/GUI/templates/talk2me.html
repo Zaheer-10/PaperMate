@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Talk2Me🗣️{% endblock %}
+
+{% block details %}
+
+<header class="site-header d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-4 text-center text-white">Talk2Me🗣️</h1>
+</header>
+
+
+<div class="pdf_viewer">
+
+<h2 class="text-center">Native Document Viewer</h2>
+    <embed class="" src="data:application/pdf;base64,{{ pdf_base64 }}" width="80%" height="800" type="application/pdf">
+
+
+</div>
+<a href="{% url 'chatbot_response' %}" class="btn custom-btn mt-3 glow" style="align-self: flex-start;"target="_blank">Ask here</a>
+
+<a href="chat.html" class="btn custom-btn mt-3 glow" style="align-self: flex-start;" target="_blank">Let's Talk</a>
+
+{% endblock %}

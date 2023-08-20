@@ -12,6 +12,9 @@ urlpatterns = [
     path('qa/', views.qa_page, name='qa'),  # Q&A page
     path('summarize/<str:paper_id>/', views.summarize_paper, name='summarize_paper'),
     path('download_paper/<str:paper_id>/', views.download_paper, name='download_paper'),
+    path('chatbot_response/', views.chatbot_response, name='chatbot_response'),
+    path('chatbot_response_api/', views.chatbot_response_gpt, name='chatbot_response_gpt'),
+
 
 
 ]
