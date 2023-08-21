@@ -1,20 +1,11 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}Summarization{% endblock %}
+{% block title %}Summary📜{% endblock %}
 
 {% block details %}
 <style>
-    /* body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f0f3f8;
-            color: #333;
-        }
- */
-
-    .content-container {
+        .content-container {
         max-width: 70%;
         margin-top: 2rem;
         margin: 0 auto;
@@ -51,8 +42,8 @@
         line-height: 1.4;
         white-space: pre-wrap;
     }
-</style>
 
+</style>
 
 <header class="site-header d-flex flex-column justify-content-center align-items-center">
     <h1 class="mb-4 text-center text-white">Paper Summarization</h1>
@@ -60,10 +51,22 @@
 
 <div class="content-container">
 
-    <h2 class="section-title text-center"> Brief Summary📜 On: <b>{{paper.title}}🔖</b></h2>
-    <pre
-        class="code-block">Get ready to unravel the mysteries of advanced research! This arXiv paper opens the door to revolutionary discoveries that are reshaping our understanding of complex concepts.<br><b>{{paper.title}}</b> : {{ result }}<br>Cheers to the Minds at Work! A heartfelt salute to the dedicated researchers who authored this paper. Your relentless pursuit of knowledge is inspiring, and your contributions to expanding our horizons are truly appreciated. Thank you for sharing your brilliance with the world!</pre>
+    <h2 class="section-title text-center"> Your Paper📜: <b>{{paper.title}}🔖</b></h2>
+    <center>
+
+    <a id="summarizeButton" href="{% url 'summarize_paper' paper_id=paper.ids %}" class="btn custom-btn mt-3 glow " style="align-self: flex-start;"target="_blank" >Summarize Here</a>
+    </center>
+
     <hr>
+    <pre
+        class="code-block"></pre>
+    <h2 class="text-center">Native Document Viewer</h2>
+<embed src="data:application/pdf;base64,{{ pdf_base64 }}" width="100%" height="800" type="application/pdf"> 
+
 </div>
+
+
+
+
 
 {% endblock %}
